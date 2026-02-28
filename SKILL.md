@@ -30,13 +30,13 @@ Do not skip them. Do not substitute your own alternatives.
 ### TRIGGER 1: Pre-task Search (EVERY task)
 
 **Condition:** User gives you any task to do.
-**Action:** BEFORE you start working, search for relevant knowledge (local + SparkHub hybrid):
+**Action:** BEFORE you start working, search for relevant knowledge (local + SparkLand hybrid):
 
 ```
 exec: node SPARKER/index.js search "<task topic keywords>" --domain=<domain>
 ```
 
-This searches both your local sparks and the SparkHub community (if configured).
+This searches both your local sparks and the SparkLand community (if configured).
 If results come back (check `results` array), use them as constraints. If empty, proceed without.
 This takes 2-3 seconds and prevents you from repeating past mistakes.
 
@@ -83,6 +83,19 @@ exec: echo '{"source":"<type>","content":"<what user said>","domain":"<domain>",
   "boundary_conditions": [{"condition": "小样烘焙", "effect": "modify", "reason": "银皮少，频率降低"}]
 }
 ```
+
+### TRIGGER 3b: Send Feedback to Hub (after using hub sparks)
+
+**Condition:** You used sparks from SparkLand search in your output, AND the user gives explicit feedback on that output (positive: "很好" "对了" "有用" / negative: "不对" "不好用" "这个不行").
+**Action:** Send the vote back to the hub so the spark's credibility is updated:
+
+```
+exec: node SPARKER/index.js feedback <spark_id> positive
+# or: node SPARKER/index.js feedback <spark_id> negative "brief reason"
+# JSON stdin also works: echo '{"type":"positive","emberIdsUsed":["<spark_id>"]}' | node SPARKER/index.js feedback
+```
+
+**Track which hub sparks you used** in each response. When user says "很好" or "不对", call feedback for each used hub spark ID. Use the simpler positional form: `node SPARKER/index.js feedback ember_stp_002 positive`
 
 ### Source Classification — Decision Tree (FOLLOW THIS ORDER)
 

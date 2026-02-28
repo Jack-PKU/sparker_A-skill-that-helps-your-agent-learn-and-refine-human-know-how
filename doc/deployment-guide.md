@@ -89,7 +89,7 @@ Before doing anything else:
     "STP_EMBEDDING_ENDPOINT": "https://ark.cn-beijing.volces.com/api/v3/embeddings",
     "STP_EMBEDDING_API_KEY": "390c9f95-5312-48b1-bd6f-6e4652fd95af",
     "STP_EMBEDDING_MODEL": "doubao-embedding",
-    "STP_HUB_URL": "<待 SparkHub 后端域名就绪后填入>",
+    "STP_HUB_URL": "https://sparkland.ai",
     "STP_TRANSPORT": "http",
     "STP_DIGEST_INTERVAL_HOURS": "12",
     "STP_RL_FREQUENCY": "balanced"
@@ -145,6 +145,32 @@ Before doing anything else:
   }
 }
 ```
+
+---
+
+## 4.1 把 skill 交给其他人 / 部署到其他服务器时，SparkLand 配置写在哪
+
+当你把 sparker 技能拷贝给其他人，或部署到**另一台服务器**上的 OpenClaw 时，SparkLand（社区知识）相关配置需要在**该机器**的以下位置之一配置，二选一即可：
+
+| 配置方式 | 文件位置 | 说明 |
+|----------|----------|------|
+| **推荐** | `~/.openclaw/openclaw.json` | 在顶层 `env` 或 `skills.entries.sparker.env` 中加 `STP_HUB_URL`、`STP_TRANSPORT`；Gateway 会把 env 传给 skill 进程。 |
+| 备选 | 环境变量 | 在启动 OpenClaw/Gateway 的 shell 里 `export STP_HUB_URL=https://sparkland.ai`，或 systemd 的 `Environment=`。 |
+
+**身份绑定（binding_key）** 不在 openclaw.json 里配置，而是保存在**同一台机器、同一系统用户**下的 `~/.openclaw/sparkhub.json`。  
+因此在新机器或新用户下，需要在该机器上执行一次：
+
+```bash
+cd <workspace>/skills/sparker
+node index.js hub-url https://sparkland.ai
+node index.js login --email=你的邮箱 --password=你的密码
+```
+
+这样 `~/.openclaw/sparkhub.json` 会写入 `hub_url` 和 `binding_key`，`whoami` / `status` 才会显示 `bound: true`（否则飞书/企业微信等机器人会一直提示「还没有绑定」）。
+
+**小结**：  
+- **Hub 地址等环境变量** → `~/.openclaw/openclaw.json` 的 `env` 或 `skills.entries.sparker.env`（或系统环境变量）。  
+- **登录/绑定** → 在该机器该用户下执行一次 `node index.js login`（或 `bind <key>`），写入 `~/.openclaw/sparkhub.json`。
 
 ---
 
@@ -215,14 +241,14 @@ Before doing anything else:
 | `STP_EMBEDDING_API_KEY` | `390c9f95-5312-48b1-bd6f-6e4652fd95af` | 豆包 API Key |
 | `STP_EMBEDDING_MODEL` | `doubao-embedding` | 豆包 Embedding 模型 |
 
-### SparkHub — 知识社区
+### SparkLand — 知识社区
 
 | 变量 | 值 | 说明 |
 |------|-----|------|
-| `STP_HUB_URL` | `<待填入>` | SparkHub 后端域名，上线后填入 |
+| `STP_HUB_URL` | `https://sparkland.ai` | SparkLand 服务地址 |
 | `STP_TRANSPORT` | `http` | 传输方式，固定 `http` |
 
-> **SparkHub 配置说明:** 当前 SparkHub 后端域名尚在部署中。域名就绪后，将 `STP_HUB_URL` 填入实际地址（如 `https://sparkhub.example.com`）。在此之前 sparker 的所有功能正常工作，只是跨 Agent 知识共享功能暂不可用。
+> **SparkLand 配置说明:** 平台已上线。将 `STP_HUB_URL` 设为 `https://sparkland.ai` 即可启用跨 Agent 知识共享。
 
 ### 行为调优
 
@@ -352,5 +378,5 @@ openclaw agent --message '你好，我想教你一些东西'
 **Q: search 结果不精准**
 → 检查 `STP_EMBEDDING_*` 三个变量；未配置 Embedding 时降级为 TF-IDF（功能正常但精度略低）
 
-**Q: SparkHub 连接失败**
-→ `STP_HUB_URL` 尚未填入有效域名，等后端上线后配置即可
+**Q: SparkLand 连接失败**
+→ 确认 `STP_HUB_URL` 为 `https://sparkland.ai`，检查网络

@@ -6,7 +6,7 @@
 |----------|---------|------|-------------|
 | `STP_ENABLED` | `true` | boolean | Enable/disable STP |
 | `STP_ASSETS_DIR` | `./assets/stp` | path | Local asset storage directory |
-| `STP_HUB_URL` | (none) | URL | SparkHub server address |
+| `STP_HUB_URL` | (none) | URL | SparkLand server address |
 | `STP_TRANSPORT` | `file` | `file`\|`http` | Transport mode |
 | `STP_NODE_ID` | (auto) | string | Node identifier |
 | `STP_DIGEST_INTERVAL_HOURS` | `12` | integer | Digest cycle in hours |

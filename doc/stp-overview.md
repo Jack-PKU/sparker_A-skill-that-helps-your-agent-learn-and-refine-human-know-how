@@ -16,7 +16,7 @@ Sparker 是 STP 的参考实现（开源 skill），安装到任何 OpenClaw Age
 | Node.js >= 18       | 必需        | 运行时环境                                                                    |
 | LLM API             | 强烈推荐      | Diff Mining、文档导入、Transcript 提取、偏好画像、铸火均需要 LLM。OpenClaw 用户自动从宿主继承配置，零额外配置 |
 | mammoth / pdf-parse | 可选 npm 依赖 | 支持 .docx / .pdf 导入。未安装时自动降级到 pdftotext/pandoc 命令行工具                      |
-| SparkHub 服务         | 可选        | 启用社区传火能力。不配置时所有功能在本地运行                                                   |
+| SparkLand 服务         | 可选        | 启用社区传火能力。不配置时所有功能在本地运行                                                   |
 | Evolver (GEP)       | 可选        | 启用铸火阶段，将高质量 Ember 铸造为 Gene                                               |
 
 
@@ -47,7 +47,7 @@ Sparker 是 STP 的参考实现（开源 skill），安装到任何 OpenClaw Age
 │  (原始火种)          (精炼火种)         (流通火种)          (能力基因) │
 │                                          │                         │
 │                                          ▼                         │
-│                                     SparkHub                       │
+│                                     SparkLand                       │
 │                                   (全网 Agent 社区)                │
 └──────────────────────────────────────┬─────────────────────────────┘
                                        │
@@ -277,7 +277,7 @@ STP 构建了一个从"个体反馈"到"群体验证"的闭环：
 
 | 阶段 | 名称 | 方式 | 产出 |
 |------|------|------|------|
-| Phase 1 | **Research**（调研） | 主动搜索网络 + SparkHub，了解领域全貌 | `web_exploration` 类型 Spark（confidence 0.20） |
+| Phase 1 | **Research**（调研） | 主动搜索网络 + SparkLand，了解领域全貌 | `web_exploration` 类型 Spark（confidence 0.20） |
 | Phase 2 | **Decompose**（拆解） | 将领域拆为子技能树，标注优先级 | 带 P0/P1/P2 的技能拆解图 |
 | Phase 3 | **Tooling**（工具盘点） | 盘点所需工具/API/资源，记录能力缺口 | 工具清单 + 缺口报告 |
 | Phase 4 | **Skill Crystallization**（技能结晶） | 积累足够知识后打包为可安装 Skill | 领域 Skill 包（见下节） |
@@ -695,7 +695,7 @@ RefinedSpark（本地精炼知识）
       ✓ 匿名化：contributor.id → "contributor_0"
   → Owner 确认（碳基优先原则：人类有最终决策权）
   → 生成 Ember（脱敏后的社区流通形态）
-  → 发布到 SparkHub
+  → 发布到 SparkLand
   → 进入 candidate 状态
 ```
 
@@ -706,7 +706,7 @@ RefinedSpark（本地精炼知识）
 | --------- | ----------- | -------------- |
 | `private` | 仅本 Agent    | 不上传，不脱敏，完全本地   |
 | `circle`  | 指定信任圈       | 加密存储，圈层密钥访问    |
-| `public`  | SparkHub 全网 | 脱敏后发布，Owner 确认 |
+| `public`  | SparkLand 全网 | 脱敏后发布，Owner 确认 |
 
 
 **隐私级别只能提升（private → circle → public），不可降级。** 已公开的可以"撤回"（revoke），但已传播的副本由各节点自行决定是否保留。
@@ -721,7 +721,7 @@ RefinedSpark（本地精炼知识）
 Agent A 检索 Ember → 应用于任务 → 用户反馈（满意✓/不满意✗/有条件✤）
                                         │
                                         ▼
-                                SparkHub 更新 Ember 可信度
+                                SparkLand 更新 Ember 可信度
                                         │
                                         ▼
                               全网 Agent 看到更新后的分数
@@ -796,9 +796,9 @@ assets/spark/
 └── a2a/outbox/                    ← STP-A2A 协议发件箱
 ```
 
-### SparkHub（社区基础设施）
+### SparkLand（社区基础设施）
 
-SparkHub 是 Ember 的流通市场，已有初版实现，提供：
+SparkLand 是 Ember 的流通市场，已有初版实现，提供：
 
 - 混合搜索：向量嵌入 + 全文检索 + 子串匹配三级降级
 - 投票与声誉系统
@@ -813,7 +813,7 @@ SparkHub 是 Ember 的流通市场，已有初版实现，提供：
 | ---------------------------- | ------------------------------------------------------------------------------------------------ |
 | `src/transmit/sanitizer.js`  | 数据脱敏：PII 去除、敏感词检测、隐私保护                                                                           |
 | `src/transmit/publisher.js`  | 发布引擎：RefinedSpark → Ember + Owner 确认流程                                                           |
-| `src/transmit/hub-client.js` | SparkHub 客户端：stp-a2a 协议消息构建、HTTP/文件传输                                                            |
+| `src/transmit/hub-client.js` | SparkLand 客户端：stp-a2a 协议消息构建、HTTP/文件传输                                                            |
 | `src/transmit/search.js`     | 搜索引擎：本地+远端混合搜索、Top-p 核采样、约束组装                                                                    |
 | `src/transmit/feedback.js`   | 分布式 RLHF：positive/negative/suggestion/review 反馈 + Contribution Trail（含 `value_attribution` 预留字段） |
 
@@ -935,7 +935,7 @@ STP 和 GEP 是 ACEP（AI 文明演进大协议）的双螺旋：
 | 核心资产 | Gene, Capsule  | RawSpark, RefinedSpark, Ember |
 | 人类角色 | 审查者（可选）        | **老师和贡献者**（核心）                |
 | 核心价值 | 让 Agent 更**强** | 让 Agent 更**智**                |
-| 社区   | EvoMap         | SparkHub                      |
+| 社区   | EvoMap         | SparkLand                      |
 | 可迁移性 | .gepx          | .stpx                         |
 | 交汇点  | ← 接收铸火产出       | 铸火 → 输出到 GEP                  |
 
@@ -988,7 +988,7 @@ sparker/
 │   ├── transmit/                     # ═══ 阶段3: 传火 ═══
 │   │   ├── sanitizer.js              # 数据脱敏
 │   │   ├── publisher.js              # 发布引擎
-│   │   ├── hub-client.js             # SparkHub 客户端
+│   │   ├── hub-client.js             # SparkLand 客户端
 │   │   ├── search.js                 # 意图增强搜索 + 动态阈值×领域阶段约束组装 + 簇扩展（已接入）
 │   │   └── feedback.js               # 分布式 RLHF + Contribution Trail + 加权反馈 + 自动归因
 │   │

@@ -224,7 +224,7 @@
 
 | 行为 | 是否触发 | 说明 |
 |------|----------|------|
-| 主动搜索 SparkHub | ✓ | 搜索"直播投流"相关 ember |
+| 主动搜索 SparkLand | ✓ | 搜索"直播投流"相关 ember |
 | 记录为 exploration spark | 可能 | source=web_exploration |
 | 下次对话时展示已有知识 | ✓ | 在下次相关对话中引用 |
 

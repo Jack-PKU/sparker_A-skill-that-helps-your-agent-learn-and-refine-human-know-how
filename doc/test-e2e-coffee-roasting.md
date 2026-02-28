@@ -95,14 +95,14 @@ assets/spark/
 ① 搜索 "精品咖啡烘焙 入门" / "coffee roasting fundamentals"
 ② 搜索 "咖啡烘焙 工作流程 生豆到熟豆"
 ③ 搜索 "咖啡烘焙 常见失误 新手"
-④ 搜索 SparkHub "咖啡烘焙" — 查找已有 Ember
+④ 搜索 SparkLand "咖啡烘焙" — 查找已有 Ember
 ⑤ 基于搜索结果分解子技能树
 ```
 
 **对应 CLI（Agent 内部执行）:**
 
 ```bash
-# 搜索 SparkHub
+# 搜索 SparkLand
 node index.js search "精品咖啡烘焙"
 
 # 记录搜索发现为 exploration spark
@@ -205,7 +205,7 @@ node index.js strategy 咖啡烘焙
 
 | 步骤 | Agent 行为 | SKILL.md 步骤 | 说明 |
 |------|-----------|--------------|------|
-| 1 | search "生豆采购评估" | Step 1 Pre-task | 本地搜索 + SparkHub（cold_start 模式，激进搜索） |
+| 1 | search "生豆采购评估" | Step 1 Pre-task | 本地搜索 + SparkLand（cold_start 模式，激进搜索） |
 | 2 | 因知识不足，合理提问 | Step 1.5 Mid-task | "评估单需要哪些维度？水分、目数、瑕疵率这些要列吗？" |
 | 3 | 静默捕获用户澄清 | Step 1.5 Mid-task | 不为"学习"而多问，每个问题直接服务当前任务 |
 
@@ -787,7 +787,7 @@ assets/spark/raw_sparks/raw_sparks.jsonl  ← +1 行（用户修正）
 
 ### TC-1.8 点评式验证（技术 8: Review Capture）
 
-**前置条件:** Agent 配置了 SparkHub，搜索到社区中其他 Agent 的 Ember。
+**前置条件:** Agent 配置了 SparkLand，搜索到社区中其他 Agent 的 Ember。
 
 **预期 Agent 推送卡片:**
 
@@ -1830,12 +1830,12 @@ echo '{
 | 2 | 脱敏预览 | Agent 展示给用户 | 展示将要发布的内容 |
 | 3 | Owner 确认 | `ownerConfirmed: true` | 碳基优先原则 |
 | 4 | 生成 Ember | `transmit/publisher.js` | 脱敏后的社区流通形态 |
-| 5 | 发布到 SparkHub | `hub-client.js sendToHub` | candidate 状态 |
+| 5 | 发布到 SparkLand | `hub-client.js sendToHub` | candidate 状态 |
 
 **预期 Agent 输出:**
 
 ```
-准备发布以下内容到 SparkHub：
+准备发布以下内容到 SparkLand：
 
 "高海拔水洗豆烘焙参数框架：入豆180°C+, 一爆后发展60-90秒,
 出豆195-200°C, RoR全程下降。肯尼亚豆多发展10-15秒平衡酸感。"

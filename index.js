@@ -232,6 +232,49 @@ async function handleProfile(args) {
   }
 }
 
+async function handleFeedback(stdinData, args) {
+  var { hubVote, getHubUrl } = require('./src/transmit/hub-client');
+  if (!getHubUrl()) {
+    process.stderr.write('[sparker] Hub URL not configured; feedback skipped.\n');
+    console.log(JSON.stringify({ ok: false, error: 'hub_not_configured' }));
+    return;
+  }
+  var params = {};
+  var pos = (args && args.positional) || [];
+  if (stdinData && stdinData.trim()) {
+    try {
+      params = JSON.parse(stdinData);
+    } catch (e) {
+      process.stderr.write('Usage: echo \'{"type":"positive","emberIdsUsed":["spark_id"]}\' | node index.js feedback\n');
+      process.exit(1);
+    }
+  } else if (pos.length >= 1) {
+    params.emberIdsUsed = [pos[0]];
+    var p2 = (pos[1] || 'positive').toLowerCase();
+    params.type = (p2 === 'downvote' || p2 === 'negative') ? 'negative' : 'positive';
+    if (pos[2]) params.reason = pos.slice(2).join(' ');
+  }
+  var type = (params.type || 'positive').toLowerCase();
+  var voteType = type === 'negative' ? 'downvote' : 'upvote';
+  var ids = params.emberIdsUsed || params.sparkIdsUsed || (params.spark_id ? [params.spark_id] : []);
+  if (!Array.isArray(ids)) ids = [ids];
+  if (ids.length === 0) {
+    process.stderr.write('Usage: node index.js feedback <spark_id> [positive|negative] [reason]\n');
+    process.stderr.write('   or: echo \'{"type":"positive","emberIdsUsed":["spark_id"]}\' | node index.js feedback\n');
+    process.exit(1);
+  }
+  var results = [];
+  for (var i = 0; i < ids.length; i++) {
+    try {
+      var r = await hubVote(ids[i], voteType, { reason: params.reason });
+      results.push({ id: ids[i], vote: voteType, ok: r && !r.error, response: r });
+    } catch (e) {
+      results.push({ id: ids[i], vote: voteType, ok: false, error: e.message });
+    }
+  }
+  console.log(JSON.stringify({ ok: results.every(function (x) { return x.ok; }), results: results }));
+}
+
 function handleStatus() {
   var storage = require('./src/core/storage');
   var { readCapabilityMap } = require('./src/core/capability-map');
@@ -493,7 +536,7 @@ function handleBind(args) {
   var key = args.positional[0] || args.flags.key;
   if (!key) {
     process.stderr.write('Usage: node index.js bind <binding_key>\n');
-    process.stderr.write('  Get your binding key from SparkHub dashboard or via: node index.js login\n');
+    process.stderr.write('  Get your binding key from SparkLand dashboard or via: node index.js login\n');
     process.exit(1);
   }
   saveBindingKey(key);
@@ -524,6 +567,8 @@ async function main() {
 
   if (args.command === 'kindle' || args.command === 'search' || args.command === 'review' || args.command === 'post-task') {
     stdinData = readStdin();
+  } else if (args.command === 'feedback' && (!args.positional || args.positional.length === 0)) {
+    stdinData = readStdin();  // only read stdin when no positional args (avoids blocking)
   }
 
   switch (args.command) {
@@ -553,6 +598,9 @@ async function main() {
       break;
     case 'review':
       await handleReview(stdinData);
+      break;
+    case 'feedback':
+      await handleFeedback(stdinData, args);
       break;
     case 'status':
       handleStatus();
@@ -587,17 +635,18 @@ async function main() {
     default:
       process.stderr.write('Sparker CLI — STP knowledge engine\n\n');
       process.stderr.write('Hub Identity:\n');
-      process.stderr.write('  login       Login to SparkHub and obtain binding key\n');
-      process.stderr.write('  register    Register a new SparkHub account (invite required)\n');
+      process.stderr.write('  login       Login to SparkLand and obtain binding key\n');
+      process.stderr.write('  register    Register a new SparkLand account (invite required)\n');
       process.stderr.write('  bind <key>  Save a binding key locally\n');
       process.stderr.write('  whoami      Show current identity (node_id, agent, hub status)\n');
-      process.stderr.write('  hub-url     Show or set SparkHub URL\n\n');
+      process.stderr.write('  hub-url     Show or set SparkLand URL\n\n');
       process.stderr.write('Knowledge:\n');
       process.stderr.write('  kindle      Capture a spark from stdin (JSON)\n');
       process.stderr.write('  teach       Start structured extraction session\n');
       process.stderr.write('  ingest      Import from file/directory\n');
       process.stderr.write('  search      Search local + hub knowledge\n');
       process.stderr.write('  publish     Publish RefinedSpark as Ember to hub\n');
+      process.stderr.write('  feedback    Send vote (positive/negative) to hub for used sparks (JSON stdin)\n');
       process.stderr.write('  digest      Run periodic review\n');
       process.stderr.write('  forge       Crystallize Ember into Gene\n\n');
       process.stderr.write('Info:\n');

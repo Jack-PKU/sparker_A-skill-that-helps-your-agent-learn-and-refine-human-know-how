@@ -490,4 +490,4 @@ assets/stp/
 ### 长期（覆盖完整生命周期）
 
 6. **Phase 2 完整测试** — TC-2.2 (Search Before Acting) + TC-2.3 (Boundary 自动发现) + TC-2.4 (簇检索)
-7. **Phase 3-4** — Ember 发布 + 社区验证 + Gene 铸造（需要 SparkHub 基础设施）
+7. **Phase 3-4** — Ember 发布 + 社区验证 + Gene 铸造（需要 SparkLand 基础设施）

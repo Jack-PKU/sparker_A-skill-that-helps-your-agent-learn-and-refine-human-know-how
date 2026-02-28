@@ -6,7 +6,7 @@
 
 1. 执行 `plan <domain> "<goal>"` — 在 capability_map 中注册新领域
 2. 执行 `status` — 确认当前状态（应为空或 blind_spot）
-3. 执行 `search "<domain>"` — 搜索 SparkHub 是否有现成 Ember
+3. 执行 `search "<domain>"` — 搜索 SparkLand 是否有现成 Ember
 
 ## Phase 2: 自主研究（Research）
 
