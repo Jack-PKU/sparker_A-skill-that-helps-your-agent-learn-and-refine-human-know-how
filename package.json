@@ -1,0 +1,28 @@
+{
+  "name": "sparker",
+  "version": "1.1.0",
+  "description": "STP (Spark Transmit Protocol) implementation — human knowledge extraction, refinement, circulation, and crystallization for AI agents",
+  "main": "index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "node -e \"require('./src/core/asset-id'); require('./src/core/storage'); require('./src/core/credibility'); require('./src/core/capability-map'); require('./src/core/preference-map'); require('./src/kindle/extractor'); require('./src/kindle/ingest'); console.log('All modules OK')\"",
+    "kindle": "node index.js kindle",
+    "teach": "node index.js teach",
+    "digest": "node index.js digest",
+    "search": "node index.js search",
+    "publish": "node index.js publish",
+    "forge": "node index.js forge",
+    "ingest": "node index.js ingest",
+    "profile": "node index.js profile",
+    "review": "node index.js review",
+    "status": "node index.js status"
+  },
+  "optionalDependencies": {
+    "mammoth": "^1.8.0",
+    "pdf-parse": "^1.1.1"
+  },
+  "keywords": ["openclaw", "stp", "spark", "sparker", "a2a", "knowledge-transfer"],
+  "license": "MIT"
+}
