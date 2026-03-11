@@ -48,11 +48,20 @@ function mapEmberToGene(ember) {
   }
 
   var strategy = [];
-  if (how.summary) strategy.push(how.summary);
+  var seenStrategy = {};
+  if (how.summary) {
+    strategy.push(how.summary);
+    seenStrategy[how.summary.toLowerCase().trim()] = true;
+  }
   if (how.detail) {
     var details = how.detail.split('\n').filter(function (l) { return l.trim(); });
     for (var k = 0; k < details.length; k++) {
-      strategy.push(details[k].replace(/^\d+\.\s*/, '').trim());
+      var step = details[k].replace(/^\d+\.\s*/, '').trim();
+      var key = step.toLowerCase();
+      if (step && !seenStrategy[key]) {
+        strategy.push(step);
+        seenStrategy[key] = true;
+      }
     }
   }
   if (strategy.length === 0) {
@@ -182,6 +191,9 @@ async function forgeEmber(emberId, opts) {
 async function forgeAll(opts) {
   var o = opts || {};
   var eligible = findForgeEligibleEmbers();
+  if (o.domain) {
+    eligible = eligible.filter(function (e) { return e.domain === o.domain; });
+  }
   if (eligible.length === 0) {
     return { ok: true, forged: 0, eligible: 0, results: [], message: 'No embers meet forge threshold' };
   }

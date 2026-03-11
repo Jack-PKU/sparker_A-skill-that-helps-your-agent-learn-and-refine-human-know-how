@@ -256,19 +256,19 @@ async function handleCategories() {
 async function handleForge(args) {
   var { forgeAll, forgeEmber } = require('./src/forge/forge-engine');
   var emberId = args.positional[0] || args.flags.ember;
+  var result;
   if (emberId) {
     var opts = {};
     if (args.flags['dry-run'] || args.flags.dryRun) opts.dryRun = true;
     if (args.flags.force) opts.force = true;
-    var result = await forgeEmber(emberId, opts);
-    console.log(JSON.stringify(result));
-    return;
+    result = await forgeEmber(emberId, opts);
+  } else {
+    var allOpts = {};
+    if (args.flags['dry-run'] || args.flags.dryRun) allOpts.dryRun = true;
+    if (args.flags.force) allOpts.force = true;
+    if (args.flags.domain) allOpts.domain = args.flags.domain;
+    result = await forgeAll(allOpts);
   }
-  var allOpts = {};
-  if (args.flags['dry-run'] || args.flags.dryRun) allOpts.dryRun = true;
-  if (args.flags.force) allOpts.force = true;
-  if (args.flags.domain) allOpts.domain = args.flags.domain;
-  var result = await forgeAll(allOpts);
   console.log(JSON.stringify(result));
 }
 

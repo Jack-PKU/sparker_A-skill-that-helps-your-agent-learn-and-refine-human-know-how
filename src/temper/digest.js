@@ -154,6 +154,10 @@ async function runDigestUnlocked(opts) {
     }
   }
 
+  if (mergeResult.merges > 0 && !o.dryRun) {
+    writeRawSparksSnapshot(allRawSparks);
+  }
+
   for (var k = 0; k < refinedSparks.length; k++) {
     decayRefinedSpark(refinedSparks[k], now);
   }

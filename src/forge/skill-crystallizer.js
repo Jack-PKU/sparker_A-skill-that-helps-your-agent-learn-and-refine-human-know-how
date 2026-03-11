@@ -165,9 +165,12 @@ function readExistingSourceSparks(skillDir) {
   for (var i = 0; i < candidates.length; i++) {
     try {
       var data = JSON.parse(fs.readFileSync(candidates[i], 'utf8'));
-      if (Array.isArray(data)) return data;
-      if (data && Array.isArray(data.source_spark_ids)) return data.source_spark_ids;
-      if (data && Array.isArray(data.sparks)) return data.sparks.map(function (s) { return typeof s === 'string' ? s : s.id; });
+      var normalize = function (arr) {
+        return arr.map(function (s) { return typeof s === 'string' ? s : (s && s.id) || ''; }).filter(Boolean);
+      };
+      if (Array.isArray(data)) return normalize(data);
+      if (data && Array.isArray(data.source_spark_ids)) return normalize(data.source_spark_ids);
+      if (data && Array.isArray(data.sparks)) return normalize(data.sparks);
     } catch (e) { /* file not found or invalid */ }
   }
   return null;
